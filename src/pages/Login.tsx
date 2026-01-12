@@ -6,11 +6,19 @@ import {
   Input,
   VStack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiLogIn } from "react-icons/fi";
+import { useState } from "react";
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState('');
+  const toast = useToast();
+  const navigate = useNavigate();
+
   return (
     <Box
       w="100%"
