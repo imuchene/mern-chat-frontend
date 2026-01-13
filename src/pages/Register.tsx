@@ -6,10 +6,54 @@ import {
   Input,
   VStack,
   Text,
+  useToast,
 } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { API_URL } from '../constants/urls';
 
 const Register = () => {
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const toast = useToast();
+  const navigate = useNavigate();
+
+  // Handle submit (register)
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const url = `${API_URL}/api/users/register`;
+      const request = new Request(url, {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password }),
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const response = await fetch(request);
+
+      /// Throw an error if the request isn't successful
+      if (response.status !== 201) {
+        throw new Error();
+      }
+
+      // Navigate to login
+      navigate('/login');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <Box
       w="100%"
@@ -81,6 +125,10 @@ const Register = () => {
                 Username
               </FormLabel>
               <Input
+                value={username}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setUsername((e.target as HTMLInputElement).value)
+                }
                 type="text"
                 size="lg"
                 bg="gray.50"
@@ -96,6 +144,10 @@ const Register = () => {
                 Email
               </FormLabel>
               <Input
+                value={email}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail((e.target as HTMLInputElement).value)
+                }
                 type="email"
                 size="lg"
                 bg="gray.50"
@@ -111,6 +163,10 @@ const Register = () => {
                 Password
               </FormLabel>
               <Input
+                value={password}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setPassword((e.target as HTMLInputElement).value)
+                }
                 type="password"
                 size="lg"
                 bg="gray.50"
@@ -122,6 +178,8 @@ const Register = () => {
             </FormControl>
 
             <Button
+              onClick={handleSubmit}
+              isLoading={loading}
               colorScheme="purple"
               width="100%"
               transform="auto"
@@ -143,7 +201,6 @@ const Register = () => {
                   fontWeight: '500',
                   transition: 'color 0.2s',
                 }}
-                _hover={{ color: 'indigo.700' }}
               >
                 Sign in
               </Link>

@@ -32,7 +32,12 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' },
       });
       const response = await fetch(request);
-      // Save the user credentials into local storage
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 200) {
+        throw new Error();
+      }
+
       // Navigate to chat
       navigate('/chat');
     } catch (error) {
