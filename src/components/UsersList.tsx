@@ -7,10 +7,10 @@ import {
   Icon,
   Tooltip,
   Avatar,
-} from "@chakra-ui/react";
-import { FiUsers, FiCircle } from "react-icons/fi";
+} from '@chakra-ui/react';
+import { FiUsers, FiCircle } from 'react-icons/fi';
 
-const UsersList = ({ users }) => {
+const UsersList = ({ users }: any) => {
   return (
     <Box
       h="100%"
@@ -51,8 +51,8 @@ const UsersList = ({ users }) => {
 
       {/* Users List */}
       <Box flex="1" overflowY="auto" p={4}>
-        <VStack align="stretch" spacing={3}>
-          {users.map((user) => (
+        <VStack align="stretch" spacing={3} shouldWrapChildren>
+          {users.map((user: any) => (
             <Box key={user._id}>
               <Tooltip label={`${user.username} is online`} placement="left">
                 <Flex

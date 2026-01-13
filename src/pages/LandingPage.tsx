@@ -13,8 +13,8 @@ import {
   HStack,
   Badge,
   Input,
-} from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom";
+} from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   FiMessageSquare,
   FiUsers,
@@ -26,20 +26,20 @@ import {
   FiActivity,
   FiCheckCircle,
   FiUserCheck,
-} from "react-icons/fi";
+} from 'react-icons/fi';
 
 const Feature = ({ title, text, icon, badges = [] }) => {
   return (
     <Stack
-      bg={useColorModeValue("white", "gray.800")}
+      bg={useColorModeValue('white', 'gray.800')}
       rounded="xl"
       p={6}
       spacing={4}
       border="1px solid"
-      borderColor={useColorModeValue("gray.100", "gray.700")}
+      borderColor={useColorModeValue('gray.100', 'gray.700')}
       _hover={{
-        transform: "translateY(-5px)",
-        boxShadow: "xl",
+        transform: 'translateY(-5px)',
+        boxShadow: 'xl',
       }}
       transition="all 0.3s ease"
     >
@@ -50,7 +50,7 @@ const Feature = ({ title, text, icon, badges = [] }) => {
         justify="center"
         color="white"
         rounded="full"
-        bg={useColorModeValue("blue.500", "blue.400")}
+        bg={useColorModeValue('blue.500', 'blue.400')}
       >
         {icon}
       </Flex>
@@ -71,7 +71,7 @@ const Feature = ({ title, text, icon, badges = [] }) => {
             </Badge>
           ))}
         </HStack>
-        <Text color={useColorModeValue("gray.500", "gray.200")}>{text}</Text>
+        <Text color={useColorModeValue('gray.500', 'gray.200')}>{text}</Text>
       </Box>
     </Stack>
   );
@@ -79,10 +79,10 @@ const Feature = ({ title, text, icon, badges = [] }) => {
 
 const ChatMessage = ({ message, sender, time, isUser }) => {
   return (
-    <Flex justify={isUser ? "flex-end" : "flex-start"} w="100%">
+    <Flex justify={isUser ? 'flex-end' : 'flex-start'} w="100%">
       <Box
-        bg={isUser ? "blue.500" : "gray.100"}
-        color={isUser ? "white" : "gray.800"}
+        bg={isUser ? 'blue.500' : 'gray.100'}
+        color={isUser ? 'white' : 'gray.800'}
         borderRadius="lg"
         px={4}
         py={2}
@@ -94,7 +94,7 @@ const ChatMessage = ({ message, sender, time, isUser }) => {
         <Text>{message}</Text>
         <Text
           fontSize="xs"
-          color={isUser ? "whiteAlpha.700" : "gray.500"}
+          color={isUser ? 'whiteAlpha.700' : 'gray.500'}
           mt={1}
         >
           {time}
@@ -106,32 +106,32 @@ const ChatMessage = ({ message, sender, time, isUser }) => {
 
 export default function LandingPage() {
   return (
-    <Box bg={useColorModeValue("gray.50", "gray.900")} minH="100vh">
+    <Box bg={useColorModeValue('gray.50', 'gray.900')} minH="100vh">
       {/* Hero Section */}
       <Container maxW="7xl" pt={10}>
         <Stack
           align="center"
           spacing={{ base: 8, md: 10 }}
           py={{ base: 20, md: 28 }}
-          direction={{ base: "column", md: "row" }}
+          direction={{ base: 'column', md: 'row' }}
         >
           <Stack flex={1} spacing={{ base: 5, md: 10 }}>
             <Heading
               lineHeight={1.1}
               fontWeight={600}
-              fontSize={{ base: "3xl", sm: "4xl", lg: "6xl" }}
+              fontSize={{ base: '3xl', sm: '4xl', lg: '6xl' }}
             >
               <Text
                 as="span"
                 position="relative"
                 _after={{
                   content: "''",
-                  width: "full",
-                  height: "30%",
-                  position: "absolute",
+                  width: 'full',
+                  height: '30%',
+                  position: 'absolute',
                   bottom: 1,
                   left: 0,
-                  bg: "blue.400",
+                  bg: 'blue.400',
                   zIndex: -1,
                 }}
               >
@@ -150,7 +150,7 @@ export default function LandingPage() {
             </Text>
             <Stack
               spacing={{ base: 4, sm: 6 }}
-              direction={{ base: "column", sm: "row" }}
+              direction={{ base: 'column', sm: 'row' }}
             >
               <Button
                 as={RouterLink}
@@ -161,7 +161,7 @@ export default function LandingPage() {
                 px={8}
                 colorScheme="blue"
                 bg="blue.400"
-                _hover={{ bg: "blue.500" }}
+                _hover={{ bg: 'blue.500' }}
                 leftIcon={<FiUserPlus />}
               >
                 Get Started
@@ -279,37 +279,37 @@ export default function LandingPage() {
             <Feature
               icon={<Icon as={FiLock} w={10} h={10} />}
               title="Secure Authentication"
-              badges={[{ text: "Secure", color: "green" }]}
+              badges={[{ text: 'Secure', color: 'green' }]}
               text="Register and login securely with email verification and encrypted passwords."
             />
             <Feature
               icon={<Icon as={FiUsers} w={10} h={10} />}
               title="Group Management"
-              badges={[{ text: "Real-time", color: "blue" }]}
+              badges={[{ text: 'Real-time', color: 'blue' }]}
               text="Create, join, or leave groups easily. Manage multiple conversations in one place."
             />
             <Feature
               icon={<Icon as={FiUserCheck} w={10} h={10} />}
               title="Online Presence"
-              badges={[{ text: "Live", color: "green" }]}
+              badges={[{ text: 'Live', color: 'green' }]}
               text="See who's currently online and active in your groups in real-time."
             />
             <Feature
               icon={<Icon as={FiActivity} w={10} h={10} />}
               title="Typing Indicators"
-              badges={[{ text: "Interactive", color: "purple" }]}
+              badges={[{ text: 'Interactive', color: 'purple' }]}
               text="Know when others are typing with real-time typing indicators."
             />
             <Feature
               icon={<Icon as={FiMessageSquare} w={10} h={10} />}
               title="Instant Messaging"
-              badges={[{ text: "Fast", color: "orange" }]}
+              badges={[{ text: 'Fast', color: 'orange' }]}
               text="Send and receive messages instantly with real-time delivery and notifications."
             />
             <Feature
               icon={<Icon as={FiGlobe} w={10} h={10} />}
               title="Global Access"
-              badges={[{ text: "24/7", color: "blue" }]}
+              badges={[{ text: '24/7', color: 'blue' }]}
               text="Access your chats from anywhere, anytime with persistent connections."
             />
           </SimpleGrid>
@@ -318,11 +318,11 @@ export default function LandingPage() {
         {/* Call to Action */}
         <Box py={20}>
           <Stack
-            direction={{ base: "column", md: "row" }}
+            direction={{ base: 'column', md: 'row' }}
             spacing={10}
             align="center"
             justify="center"
-            bg={useColorModeValue("blue.50", "blue.900")}
+            bg={useColorModeValue('blue.50', 'blue.900')}
             p={10}
             rounded="xl"
           >

@@ -1,6 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
-import Sidebar from "../components/Sidebar";
-import ChatArea from "../components/ChatArea";
+import { Box, Flex } from '@chakra-ui/react';
+import Sidebar from '../components/Sidebar';
+import ChatArea from '../components/ChatArea';
 
 const Chat = () => {
   return (

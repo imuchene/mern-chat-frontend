@@ -9,40 +9,40 @@ import {
   Avatar,
   InputGroup,
   InputRightElement,
-} from "@chakra-ui/react";
-import { FiSend, FiInfo, FiMessageCircle } from "react-icons/fi";
-import UsersList from "./UsersList";
+} from '@chakra-ui/react';
+import { FiSend, FiInfo, FiMessageCircle } from 'react-icons/fi';
+import UsersList from './UsersList';
 
 const ChatArea = () => {
   // Sample data for demonstration
   const sampleMessages = [
     {
       id: 1,
-      content: "Hey team! Just pushed the new updates to staging.",
-      sender: { username: "Sarah Chen" },
-      createdAt: "10:30 AM",
+      content: 'Hey team! Just pushed the new updates to staging.',
+      sender: { username: 'Sarah Chen' },
+      createdAt: '10:30 AM',
       isCurrentUser: false,
     },
     {
       id: 2,
-      content: "Great work! The new features look amazing 🚀",
-      sender: { username: "Alex Thompson" },
-      createdAt: "10:31 AM",
+      content: 'Great work! The new features look amazing 🚀',
+      sender: { username: 'Alex Thompson' },
+      createdAt: '10:31 AM',
       isCurrentUser: false,
     },
     {
       id: 3,
       content: "Thanks! Let's review it in our next standup.",
-      sender: { username: "You" },
-      createdAt: "10:32 AM",
+      sender: { username: 'You' },
+      createdAt: '10:32 AM',
       isCurrentUser: true,
     },
   ];
 
   const sampleUsers = [
-    { id: 1, username: "Sarah Chen", isOnline: true },
-    { id: 2, username: "Alex Thompson", isOnline: true },
-    { id: 3, username: "John Doe", isOnline: false },
+    { id: 1, username: 'Sarah Chen', isOnline: true },
+    { id: 2, username: 'Alex Thompson', isOnline: true },
+    { id: 3, username: 'John Doe', isOnline: false },
   ];
 
   return (
@@ -78,7 +78,7 @@ const ChatArea = () => {
             fontSize="20px"
             color="gray.400"
             cursor="pointer"
-            _hover={{ color: "blue.500" }}
+            _hover={{ color: 'blue.500' }}
           />
         </Flex>
 
@@ -92,22 +92,22 @@ const ChatArea = () => {
           py={4}
           position="relative"
           sx={{
-            "&::-webkit-scrollbar": {
-              width: "8px",
+            '&::-webkit-scrollbar': {
+              width: '8px',
             },
-            "&::-webkit-scrollbar-track": {
-              width: "10px",
+            '&::-webkit-scrollbar-track': {
+              width: '10px',
             },
-            "&::-webkit-scrollbar-thumb": {
-              background: "gray.200",
-              borderRadius: "24px",
+            '&::-webkit-scrollbar-thumb': {
+              background: 'gray.200',
+              borderRadius: '24px',
             },
           }}
         >
           {sampleMessages.map((message) => (
             <Box
               key={message.id}
-              alignSelf={message.isCurrentUser ? "flex-start" : "flex-end"}
+              alignSelf={message.isCurrentUser ? 'flex-start' : 'flex-end'}
               maxW="70%"
             >
               <Flex direction="column" gap={1}>
@@ -115,7 +115,7 @@ const ChatArea = () => {
                   align="center"
                   mb={1}
                   justifyContent={
-                    message.isCurrentUser ? "flex-start" : "flex-end"
+                    message.isCurrentUser ? 'flex-start' : 'flex-end'
                   }
                   gap={2}
                 >
@@ -137,8 +137,8 @@ const ChatArea = () => {
                 </Flex>
 
                 <Box
-                  bg={message.isCurrentUser ? "blue.500" : "white"}
-                  color={message.isCurrentUser ? "white" : "gray.800"}
+                  bg={message.isCurrentUser ? 'blue.500' : 'white'}
+                  color={message.isCurrentUser ? 'white' : 'gray.800'}
                   p={3}
                   borderRadius="lg"
                   boxShadow="sm"
@@ -166,8 +166,8 @@ const ChatArea = () => {
               bg="gray.50"
               border="none"
               _focus={{
-                boxShadow: "none",
-                bg: "gray.100",
+                boxShadow: 'none',
+                bg: 'gray.100',
               }}
             />
             <InputRightElement width="4.5rem">
@@ -177,7 +177,7 @@ const ChatArea = () => {
                 colorScheme="blue"
                 borderRadius="full"
                 _hover={{
-                  transform: "translateY(-1px)",
+                  transform: 'translateY(-1px)',
                 }}
                 transition="all 0.2s"
               >

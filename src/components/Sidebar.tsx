@@ -18,15 +18,15 @@ import {
   Icon,
   Badge,
   Tooltip,
-} from "@chakra-ui/react";
-import { useState } from "react";
-import { FiLogOut, FiPlus, FiUsers } from "react-icons/fi";
-import { Link } from "react-router-dom";
+} from '@chakra-ui/react';
+import { useState } from 'react';
+import { FiLogOut, FiPlus, FiUsers } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [newGroupName, setNewGroupName] = useState("");
-  const [newGroupDescription, setNewGroupDescription] = useState("");
+  const [newGroupName, setNewGroupName] = useState('');
+  const [newGroupDescription, setNewGroupDescription] = useState('');
   const toast = useToast();
   const isAdmin = true;
 
@@ -34,20 +34,20 @@ const Sidebar = () => {
   const groups = [
     {
       id: 1,
-      name: "Development Team",
-      description: "Main development team channel for daily updates",
+      name: 'Development Team',
+      description: 'Main development team channel for daily updates',
       isJoined: true,
     },
     {
       id: 2,
-      name: "Design Team",
-      description: "Collaboration space for designers",
+      name: 'Design Team',
+      description: 'Collaboration space for designers',
       isJoined: false,
     },
     {
       id: 3,
-      name: "Marketing",
-      description: "Marketing team discussions and campaigns",
+      name: 'Marketing',
+      description: 'Marketing team discussions and campaigns',
       isJoined: true,
     },
   ];
@@ -103,14 +103,14 @@ const Sidebar = () => {
               p={4}
               cursor="pointer"
               borderRadius="lg"
-              bg={group.isJoined ? "blue.50" : "gray.50"}
+              bg={group.isJoined ? 'blue.50' : 'gray.50'}
               borderWidth="1px"
-              borderColor={group.isJoined ? "blue.200" : "gray.200"}
+              borderColor={group.isJoined ? 'blue.200' : 'gray.200'}
               transition="all 0.2s"
               _hover={{
-                transform: "translateY(-2px)",
-                shadow: "md",
-                borderColor: "blue.300",
+                transform: 'translateY(-2px)',
+                shadow: 'md',
+                borderColor: 'blue.300',
               }}
             >
               <Flex justify="space-between" align="center">
@@ -131,12 +131,12 @@ const Sidebar = () => {
                 </Box>
                 <Button
                   size="sm"
-                  colorScheme={group.isJoined ? "red" : "blue"}
-                  variant={group.isJoined ? "ghost" : "solid"}
+                  colorScheme={group.isJoined ? 'red' : 'blue'}
+                  variant={group.isJoined ? 'ghost' : 'solid'}
                   ml={3}
                   _hover={{
-                    transform: group.isJoined ? "scale(1.05)" : "none",
-                    bg: group.isJoined ? "red.50" : "blue.600",
+                    transform: group.isJoined ? 'scale(1.05)' : 'none',
+                    bg: group.isJoined ? 'red.50' : 'blue.600',
                   }}
                   transition="all 0.2s"
                 >
@@ -145,7 +145,7 @@ const Sidebar = () => {
                       Leave
                     </Text>
                   ) : (
-                    "Join"
+                    'Join'
                   )}
                 </Button>
               </Flex>
@@ -173,9 +173,9 @@ const Sidebar = () => {
           colorScheme="red"
           leftIcon={<Icon as={FiLogOut} />}
           _hover={{
-            bg: "red.50",
-            transform: "translateY(-2px)",
-            shadow: "md",
+            bg: 'red.50',
+            transform: 'translateY(-2px)',
+            shadow: 'md',
           }}
           transition="all 0.2s"
         >
@@ -216,14 +216,14 @@ const Sidebar = () => {
               width="full"
               onClick={() => {
                 toast({
-                  title: "Group created successfully",
-                  status: "success",
+                  title: 'Group created successfully',
+                  status: 'success',
                   duration: 3000,
                   isClosable: true,
                 });
                 onClose();
-                setNewGroupName("");
-                setNewGroupDescription("");
+                setNewGroupName('');
+                setNewGroupDescription('');
               }}
             >
               Create Group
