@@ -19,16 +19,34 @@ import {
   Badge,
   Tooltip,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiLogOut, FiPlus, FiUsers } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { LocalStorageEnum } from '../enums/local-storage.enum';
 
 const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newGroupName, setNewGroupName] = useState('');
   const [newGroupDescription, setNewGroupDescription] = useState('');
+  const [isAdmin, setIsAdmin] = useState(true);
   const toast = useToast();
-  const isAdmin = true;
+
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  // Check if logged in user is an admin
+  const checkAdminStatus = () => {
+    const userInfo =
+      JSON.parse(String(localStorage.getItem(LocalStorageEnum.UserInfo))) || {};
+    setIsAdmin(userInfo?.user.isAdmin || false);
+  };
+  // Fetch all groups
+  // Fetch users groups
+  // Create groups
+  // Logout
+  // Join group
+  // Leave group
 
   // Sample groups data
   const groups = [

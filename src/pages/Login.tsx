@@ -12,6 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiLogIn } from 'react-icons/fi';
 import React, { useState } from 'react';
 import { API_URL } from '../constants/urls';
+import { LocalStorageEnum } from '../enums/local-storage.enum';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -26,17 +27,23 @@ const Login = () => {
     setLoading(true);
     try {
       const url = `${API_URL}/api/users/login`;
+
       const request = new Request(url, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' },
       });
+
       const response = await fetch(request);
+
+      const body = await response.json();
 
       // Throw an error if the request isn't successful
       if (response.status !== 200) {
         throw new Error();
       }
+
+      localStorage.setItem(LocalStorageEnum.UserInfo, JSON.stringify(body));
 
       // Navigate to chat
       navigate('/chat');
