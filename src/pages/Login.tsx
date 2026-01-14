@@ -32,6 +32,7 @@ const Login = () => {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
 
       const response = await fetch(request);

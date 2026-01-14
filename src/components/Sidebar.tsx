@@ -23,16 +23,20 @@ import { useEffect, useState } from 'react';
 import { FiLogOut, FiPlus, FiUsers } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
+import { API_URL } from '../constants/urls';
+import { Group } from '../interfaces/group.interface';
 
 const Sidebar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newGroupName, setNewGroupName] = useState('');
+  const [groups, setGroups] = useState(Array<Group>);
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [isAdmin, setIsAdmin] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
     checkAdminStatus();
+    fetchGroups();
   }, []);
 
   // Check if logged in user is an admin
@@ -42,33 +46,42 @@ const Sidebar = () => {
     setIsAdmin(userInfo?.user.isAdmin || false);
   };
   // Fetch all groups
+  const fetchGroups = async () => {
+    try {
+      const url = `${API_URL}/api/groups`;
+      const request = new Request(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await fetch(request);
+
+      const groups = await response.json();
+      setGroups(groups);
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 200) {
+        throw new Error();
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
   // Fetch users groups
   // Create groups
   // Logout
   // Join group
   // Leave group
-
-  // Sample groups data
-  const groups = [
-    {
-      id: 1,
-      name: 'Development Team',
-      description: 'Main development team channel for daily updates',
-      isJoined: true,
-    },
-    {
-      id: 2,
-      name: 'Design Team',
-      description: 'Collaboration space for designers',
-      isJoined: false,
-    },
-    {
-      id: 3,
-      name: 'Marketing',
-      description: 'Marketing team discussions and campaigns',
-      isJoined: true,
-    },
-  ];
 
   return (
     <Box
@@ -117,7 +130,7 @@ const Sidebar = () => {
         <VStack spacing={3} align="stretch">
           {groups.map((group) => (
             <Box
-              key={group.id}
+              key={group._id}
               p={4}
               cursor="pointer"
               borderRadius="lg"
