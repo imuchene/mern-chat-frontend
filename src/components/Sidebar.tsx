@@ -25,11 +25,13 @@ import { Link } from 'react-router-dom';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
 import { API_URL } from '../constants/urls';
 import { Group } from '../interfaces/group.interface';
+import { User } from '../interfaces/user.interface';
 
-const Sidebar = () => {
+const Sidebar = ({ setSelectedGroup }: any) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newGroupName, setNewGroupName] = useState('');
   const [groups, setGroups] = useState(Array<Group>);
+  const [userGroups, setUserGroups] = useState(Array<string>);
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [isAdmin, setIsAdmin] = useState(true);
   const toast = useToast();
@@ -39,10 +41,11 @@ const Sidebar = () => {
     fetchGroups();
   }, []);
 
+  const userInfo: any =
+    JSON.parse(String(localStorage.getItem(LocalStorageEnum.UserInfo))) || {};
+
   // Check if logged in user is an admin
   const checkAdminStatus = () => {
-    const userInfo =
-      JSON.parse(String(localStorage.getItem(LocalStorageEnum.UserInfo))) || {};
     setIsAdmin(userInfo?.user.isAdmin || false);
   };
   // Fetch all groups
@@ -57,8 +60,21 @@ const Sidebar = () => {
 
       const response = await fetch(request);
 
-      const groups = await response.json();
+      const groups: Group[] = await response.json();
       setGroups(groups);
+
+      // get user groups
+      let userGroupIds: string[] = [];
+
+      groups.forEach((group: Group) => {
+        group.members.forEach((member: User) => {
+          if (member._id === userInfo.user._id) {
+            userGroupIds.push(group._id);
+          }
+        });
+      });
+
+      setUserGroups(userGroupIds);
 
       // Throw an error if the request isn't successful
       if (response.status !== 200) {
@@ -77,8 +93,50 @@ const Sidebar = () => {
     }
   };
 
-  // Fetch users groups
   // Create groups
+  const handleCreateGroup = async () => {
+    try {
+      const url = `${API_URL}/api/groups`;
+      const request = new Request(url, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newGroupName,
+          description: newGroupDescription,
+        }),
+      });
+
+      const response = await fetch(request);
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 201) {
+        throw new Error();
+      }
+
+      toast({
+        title: 'Group Created',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      onClose();
+      fetchGroups();
+      setNewGroupName('');
+      setNewGroupDescription('');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error Creating Group',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
   // Logout
   // Join group
   // Leave group
@@ -134,9 +192,11 @@ const Sidebar = () => {
               p={4}
               cursor="pointer"
               borderRadius="lg"
-              bg={group.isJoined ? 'blue.50' : 'gray.50'}
+              bg={userGroups.includes(group?._id) ? 'blue.50' : 'gray.50'}
               borderWidth="1px"
-              borderColor={group.isJoined ? 'blue.200' : 'gray.200'}
+              borderColor={
+                userGroups.includes(group?._id) ? 'blue.200' : 'gray.200'
+              }
               transition="all 0.2s"
               _hover={{
                 transform: 'translateY(-2px)',
@@ -145,12 +205,17 @@ const Sidebar = () => {
               }}
             >
               <Flex justify="space-between" align="center">
-                <Box flex="1">
+                <Box
+                  onClick={() =>
+                    userGroups.includes(group?._id) && setSelectedGroup(group)
+                  }
+                  flex="1"
+                >
                   <Flex align="center" mb={2}>
                     <Text fontWeight="bold" color="gray.800">
                       {group.name}
                     </Text>
-                    {group.isJoined && (
+                    {userGroups.includes(group?._id) && (
                       <Badge ml={2} colorScheme="blue" variant="subtle">
                         Joined
                       </Badge>
@@ -171,7 +236,7 @@ const Sidebar = () => {
                   }}
                   transition="all 0.2s"
                 >
-                  {group.isJoined ? (
+                  {userGroups.includes(group?._id) ? (
                     <Text fontSize="sm" fontWeight="medium">
                       Leave
                     </Text>
@@ -245,17 +310,7 @@ const Sidebar = () => {
               mr={3}
               mt={4}
               width="full"
-              onClick={() => {
-                toast({
-                  title: 'Group created successfully',
-                  status: 'success',
-                  duration: 3000,
-                  isClosable: true,
-                });
-                onClose();
-                setNewGroupName('');
-                setNewGroupDescription('');
-              }}
+              onClick={handleCreateGroup}
             >
               Create Group
             </Button>
