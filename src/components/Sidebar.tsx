@@ -137,8 +137,46 @@ const Sidebar = ({ setSelectedGroup }: any) => {
       }
     }
   };
-  // Logout
+
   // Join group
+  const handleJoinGroup = async (groupId: string) => {
+    try {
+      const url = `${API_URL}/api/groups/${groupId}/join`;
+      const request = new Request(url, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await fetch(request);
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 200) {
+        throw new Error();
+      }
+
+      await fetchGroups();
+      setSelectedGroup(groups.find((group) => group._id === groupId));
+      toast({
+        title: 'Joined group successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error Joining Group',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  // Logout
   // Leave group
 
   return (
@@ -230,6 +268,7 @@ const Sidebar = ({ setSelectedGroup }: any) => {
                   colorScheme={group.isJoined ? 'red' : 'blue'}
                   variant={group.isJoined ? 'ghost' : 'solid'}
                   ml={3}
+                  onClick={() => handleJoinGroup(group._id)}
                   _hover={{
                     transform: group.isJoined ? 'scale(1.05)' : 'none',
                     bg: group.isJoined ? 'red.50' : 'blue.600',
