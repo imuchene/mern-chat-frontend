@@ -27,7 +27,7 @@ import { API_URL } from '../constants/urls';
 import { Group } from '../interfaces/group.interface';
 import { User } from '../interfaces/user.interface';
 
-const Sidebar = ({ setSelectedGroup }: any) => {
+const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [newGroupName, setNewGroupName] = useState('');
   const [groups, setGroups] = useState(Array<Group>);
@@ -176,8 +176,45 @@ const Sidebar = ({ setSelectedGroup }: any) => {
     }
   };
 
-  // Logout
   // Leave group
+  const handleLeaveGroup = async (groupId: string) => {
+    try {
+      const url = `${API_URL}/api/groups/${groupId}/leave`;
+      const request = new Request(url, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await fetch(request);
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 200) {
+        throw new Error();
+      }
+
+      await fetchGroups();
+
+      toast({
+        title: 'Left group successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error Leaving Group',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  // Logout
 
   return (
     <Box
@@ -265,13 +302,19 @@ const Sidebar = ({ setSelectedGroup }: any) => {
                 </Box>
                 <Button
                   size="sm"
-                  colorScheme={group.isJoined ? 'red' : 'blue'}
-                  variant={group.isJoined ? 'ghost' : 'solid'}
+                  colorScheme={userGroups.includes(group._id) ? 'red' : 'blue'}
+                  variant={userGroups.includes(group._id) ? 'ghost' : 'solid'}
                   ml={3}
-                  onClick={() => handleJoinGroup(group._id)}
+                  onClick={() => {
+                    userGroups.includes(group._id)
+                      ? handleLeaveGroup(group._id)
+                      : handleJoinGroup(group._id);
+                  }}
                   _hover={{
-                    transform: group.isJoined ? 'scale(1.05)' : 'none',
-                    bg: group.isJoined ? 'red.50' : 'blue.600',
+                    transform: userGroups.includes(group._id)
+                      ? 'scale(1.05)'
+                      : 'none',
+                    bg: userGroups.includes(group._id) ? 'red.50' : 'blue.600',
                   }}
                   transition="all 0.2s"
                 >
