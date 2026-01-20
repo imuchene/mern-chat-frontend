@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { FiLogOut, FiPlus, FiUsers } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
 import { API_URL } from '../constants/urls';
 import { Group } from '../interfaces/group.interface';
@@ -35,6 +35,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
   const [newGroupDescription, setNewGroupDescription] = useState('');
   const [isAdmin, setIsAdmin] = useState(true);
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkAdminStatus();
@@ -115,7 +116,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
       }
 
       toast({
-        title: 'Group Created',
+        title: 'Group created',
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -128,7 +129,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
     } catch (error) {
       if (error instanceof Error) {
         toast({
-          title: 'Error Creating Group',
+          title: 'Error creating Group',
           description: error.message || 'An error occurred',
           status: 'error',
           duration: 5000,
@@ -166,7 +167,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
     } catch (error) {
       if (error instanceof Error) {
         toast({
-          title: 'Error Joining Group',
+          title: 'Error joining Group',
           description: error.message || 'An error occurred',
           status: 'error',
           duration: 5000,
@@ -204,7 +205,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
     } catch (error) {
       if (error instanceof Error) {
         toast({
-          title: 'Error Leaving Group',
+          title: 'Error leaving Group',
           description: error.message || 'An error occurred',
           status: 'error',
           duration: 5000,
@@ -215,6 +216,42 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
   };
 
   // Logout
+  const handleLogout = async () => {
+    try {
+      const url = `${API_URL}/api/users/logout`;
+      const request = new Request(url, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await fetch(request);
+
+      // Throw an error if the request isn't successful
+      if (response.status !== 200) {
+        throw new Error();
+      }
+
+      navigate('/login');
+
+      toast({
+        title: 'Logged out successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error logging out',
+          description: error.message || 'An error occurred',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    }
+  };
 
   return (
     <Box
@@ -344,9 +381,7 @@ const Sidebar = ({ setSelectedGroup }: React.SetStateAction<any>) => {
         width="100%"
       >
         <Button
-          as={Link}
-          to="/login"
-          width="full"
+          onClick={handleLogout}
           variant="ghost"
           colorScheme="red"
           leftIcon={<Icon as={FiLogOut} />}
