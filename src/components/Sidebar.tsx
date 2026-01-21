@@ -21,7 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { FiLogOut, FiPlus, FiUsers } from 'react-icons/fi';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
 import { API_URL } from '../constants/urls';
 import { Group } from '../interfaces/group.interface';
