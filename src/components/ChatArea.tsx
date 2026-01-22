@@ -9,11 +9,53 @@ import {
   Avatar,
   InputGroup,
   InputRightElement,
+  useToast,
 } from '@chakra-ui/react';
 import { FiSend, FiInfo, FiMessageCircle } from 'react-icons/fi';
 import UsersList from './UsersList';
+import { useEffect, useRef, useState } from 'react';
+import { LocalStorageEnum } from '../enums/local-storage.enum';
+import { API_URL } from '../constants/urls';
 
-const ChatArea = () => {
+const ChatArea = ({ selectedGroup, socket }: any) => {
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState('');
+  const [connectedUsers, setConnectedUsers] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingUsers, setTypingUsers] = useState(new Set());
+  const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+  const toast = useToast();
+
+  const currentUser = JSON.parse(
+    localStorage.getItem(LocalStorageEnum.UserInfo) || '{}',
+  );
+
+  useEffect(() => {
+    if (selectedGroup && socket) {
+      // fetch messages
+      fetchMessages();
+    }
+  }, [selectedGroup, socket]);
+
+  // Fetch messages
+  const fetchMessages = async () => {
+    try {
+      const url = `${API_URL}/api/messages/${selectedGroup?._id}`;
+      const request = new Request(url, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await fetch(request);
+
+      const groupMessages = await response.json();
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
   // Sample data for demonstration
   const sampleMessages = [
     {
