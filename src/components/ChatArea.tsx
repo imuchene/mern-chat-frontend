@@ -16,11 +16,12 @@ import UsersList from './UsersList';
 import { useEffect, useRef, useState } from 'react';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
 import { API_URL } from '../constants/urls';
+import { SocketEvents } from '../enums/socket-events.enum';
 
 const ChatArea = ({ selectedGroup, socket }: any) => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<string[]>([]);
   const [newMessage, setNewMessage] = useState('');
-  const [connectedUsers, setConnectedUsers] = useState([]);
+  const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState(new Set());
   const messagesEndRef = useRef(null);
@@ -35,8 +36,62 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
     if (selectedGroup && socket) {
       // fetch messages
       fetchMessages();
+      socket.emit(SocketEvents.JoinRoom, selectedGroup._id);
+      socket.on(SocketEvents.MessageReceived, (newMessage: string) => {
+        setMessages((prev) => [...prev, newMessage]);
+      });
+
+      socket.on(SocketEvents.UsersInRoom, (users: any) => {
+        setConnectedUsers(users);
+      });
+
+      socket.on(SocketEvents.UserJoined, (user: any) => {
+        setConnectedUsers((prev) => [...prev, user]);
+      });
+
+      socket.on(SocketEvents.UserLeft, (userId: string) => {
+        setConnectedUsers((prev) => prev.filter((user) => user._id !== userId));
+      });
+
+      socket.on(SocketEvents.Notification, (notification: any) => {
+        toast({
+          title:
+            notification.type === SocketEvents.UserJoined
+              ? SocketEvents.NewUser
+              : SocketEvents.Notification,
+          description: notification.message,
+          status: 'info',
+          duration: 3000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      });
+
+      socket.on(SocketEvents.UserTyping, ({ username }: any) => {
+        setTypingUsers((prev) => new Set(prev).add(username));
+      });
+
+      socket.on(SocketEvents.UserStopTyping, ({ username }: any) => {
+        setTypingUsers((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(username);
+          return newSet;
+        });
+      });
+
+      // clean up
+      return () => {
+        socket.emit(SocketEvents.LeaveRoom, selectedGroup._id);
+        socket.off(SocketEvents.MessageReceived);
+        socket.off(SocketEvents.UsersInRoom);
+        socket.off(SocketEvents.UserJoined);
+        socket.off(SocketEvents.UserLeft);
+        socket.off(SocketEvents.Notification);
+        socket.off(SocketEvents.UserTyping);
+        socket.off(SocketEvents.UserStopTyping);
+      };
     }
-  }, [selectedGroup, socket]);
+  }, [selectedGroup, socket, toast]);
 
   // Fetch messages
   const fetchMessages = async () => {
@@ -79,12 +134,6 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
       createdAt: '10:32 AM',
       isCurrentUser: true,
     },
-  ];
-
-  const sampleUsers = [
-    { id: 1, username: 'Sarah Chen', isOnline: true },
-    { id: 2, username: 'Alex Thompson', isOnline: true },
-    { id: 3, username: 'John Doe', isOnline: false },
   ];
 
   return (
@@ -239,7 +288,7 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
         height="100%"
         flexShrink={0}
       >
-        <UsersList users={sampleUsers} />
+        {selectedGroup && <UsersList users={connectedUsers} />}
       </Box>
     </Flex>
   );

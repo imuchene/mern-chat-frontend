@@ -1,0 +1,17 @@
+export enum SocketEvents {
+  Connection = 'connection',
+  JoinRoom = 'JoinRoom',
+  LeaveRoom = 'LeaveRoom',
+  UsersInRoom = 'UsersInRoom',
+  Notification = 'Notification',
+  UserLeft = 'UserLeft',
+  UserJoined = 'UserJoined',
+  NewMessage = 'NewMessage',
+  MessageReceived = 'MessageReceived',
+  Disconnect = 'Disconnect',
+  Typing = 'Typing',
+  UserTyping = 'UserTyping',
+  StopTyping = 'StopTyping',
+  UserStopTyping = 'UserStopTyping',
+  NewUser = 'New User',
+}
