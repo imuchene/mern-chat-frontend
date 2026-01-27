@@ -184,7 +184,73 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
       minute: '2-digit',
     });
   };
+
   // render typing indicator
+  const renderTypingIndicator = () => {
+    if (typingUsers.size === 0) return null;
+    const typingUsersArray = Array.from(typingUsers);
+
+    return typingUsersArray.map((username: any) => (
+      <Box
+        key={username}
+        alignSelf={
+          username === currentUser.username ? 'flex-start' : 'flex-end'
+        }
+        maxW="70%"
+      >
+        <Flex
+          align="center"
+          bg={username === currentUser.username ? 'blue.50' : 'gray.50'}
+          p={2}
+          borderRadius="lg"
+          gap={2}
+        >
+          {/* current user (You) - left side */}
+          {username === currentUser.username ? (
+            <>
+              <Avatar size="xs" name={username} />
+              <Flex align="center" gap={1}>
+                <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                  You are typing
+                </Text>
+                <Flex gap={1}>
+                  {[1, 2, 3].map((dot) => (
+                    <Box
+                      key={dot}
+                      w="3px"
+                      h="3px"
+                      borderRadius="full"
+                      bg="gray.500"
+                    />
+                  ))}
+                </Flex>
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Flex align="center" gap={1}>
+                <Text fontSize="sm" color="gray.500" fontStyle="italic">
+                  {username} is typing
+                </Text>
+                <Flex gap={1}>
+                  {[1, 2, 3].map((dot) => (
+                    <Box
+                      key={dot}
+                      w="3px"
+                      h="3px"
+                      borderRadius="full"
+                      bg="gray.500"
+                    />
+                  ))}
+                </Flex>
+              </Flex>
+              <Avatar size="xs" name={username} />
+            </>
+          )}
+        </Flex>
+      </Box>
+    ));
+  };
 
   // Sample data for demonstration
   const sampleMessages = [
