@@ -25,7 +25,7 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState(new Set());
   const messagesEndRef = useRef(null);
-  const typingTimeoutRef = useRef(null);
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toast = useToast();
 
   const currentUser = JSON.parse(
@@ -110,6 +110,81 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
       console.log('error', error);
     }
   };
+
+  // send message
+  const sendMessage = async () => {
+    if (!newMessage.trim()) {
+      return;
+    }
+
+    try {
+      const url = `${API_URL}/api/messages`;
+      const request = new Request(url, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          groupId: selectedGroup._id,
+          content: newMessage,
+        }),
+      });
+
+      const response = await fetch(request);
+
+      const data = await response.json();
+      socket.emit(SocketEvents.NewMessage, {
+        ...data,
+        groupId: selectedGroup._id,
+      });
+      setMessages([...messages, data]);
+      setNewMessage('');
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: 'Error sending message',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    }
+  };
+
+  // handle typing
+  const handleTyping = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    setNewMessage(target.value);
+    if (!isTyping && selectedGroup) {
+      setIsTyping(true);
+      socket.emit(SocketEvents.Typing, {
+        groupId: selectedGroup._id,
+        username: currentUser.username,
+      });
+    }
+    // clear existing timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    // set new timeout
+    typingTimeoutRef.current = setTimeout(() => {
+      if (selectedGroup) {
+        socket.emit(SocketEvents.StopTyping, {
+          groupId: selectedGroup._id,
+        });
+      }
+      setIsTyping(false);
+    }, 2000);
+  };
+
+  // format time
+  const formatTime = (date: string) => {
+    return new Date(date).toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+  // render typing indicator
 
   // Sample data for demonstration
   const sampleMessages = [
