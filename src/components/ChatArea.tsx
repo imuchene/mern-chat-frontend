@@ -13,13 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { FiSend, FiInfo, FiMessageCircle } from 'react-icons/fi';
 import UsersList from './UsersList';
-import { useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { LocalStorageEnum } from '../enums/local-storage.enum';
 import { API_URL } from '../constants/urls';
 import { SocketEvents } from '../enums/socket-events.enum';
 
 const ChatArea = ({ selectedGroup, socket }: any) => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [connectedUsers, setConnectedUsers] = useState<any[]>([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -106,6 +106,7 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
       const response = await fetch(request);
 
       const groupMessages = await response.json();
+      setMessages(groupMessages);
     } catch (error) {
       console.log('error', error);
     }
@@ -151,7 +152,7 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
   };
 
   // handle typing
-  const handleTyping = (e: Event) => {
+  const handleTyping = (e: ChangeEvent<HTMLInputElement>) => {
     const target = e.target as HTMLInputElement;
     setNewMessage(target.value);
     if (!isTyping && selectedGroup) {
@@ -336,10 +337,14 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
             },
           }}
         >
-          {sampleMessages.map((message) => (
+          {messages.map((message) => (
             <Box
-              key={message.id}
-              alignSelf={message.isCurrentUser ? 'flex-start' : 'flex-end'}
+              key={message._id}
+              alignSelf={
+                message.sender._id === currentUser._id
+                  ? 'flex-start'
+                  : 'flex-end'
+              }
               maxW="70%"
             >
               <Flex direction="column" gap={1}>
@@ -347,21 +352,24 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
                   align="center"
                   mb={1}
                   justifyContent={
-                    message.isCurrentUser ? 'flex-start' : 'flex-end'
+                    message.sender._id === currentUser._id
+                      ? 'flex-start'
+                      : 'flex-end'
                   }
                   gap={2}
                 >
-                  {message.isCurrentUser ? (
+                  {message.sender._id === currentUser._id ? (
                     <>
                       <Avatar size="xs" name={message.sender.username} />
                       <Text fontSize="xs" color="gray.500">
-                        You • {message.createdAt}
+                        You • {formatTime(message.createdAt)}
                       </Text>
                     </>
                   ) : (
                     <>
                       <Text fontSize="xs" color="gray.500">
-                        {message.sender.username} • {message.createdAt}
+                        {message.sender.username} •{' '}
+                        {formatTime(message.createdAt)}
                       </Text>
                       <Avatar size="xs" name={message.sender.username} />
                     </>
@@ -369,8 +377,16 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
                 </Flex>
 
                 <Box
-                  bg={message.isCurrentUser ? 'blue.500' : 'white'}
-                  color={message.isCurrentUser ? 'white' : 'gray.800'}
+                  bg={
+                    message.sender._id === currentUser?._id
+                      ? 'blue.500'
+                      : 'white'
+                  }
+                  color={
+                    message.sender._id === currentUser?._id
+                      ? 'white'
+                      : 'gray.800'
+                  }
                   p={3}
                   borderRadius="lg"
                   boxShadow="sm"
@@ -381,7 +397,8 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
             </Box>
           ))}
         </VStack>
-
+        {renderTypingIndicator()}
+        <div ref={messagesEndRef} />
         {/* Message Input */}
         <Box
           p={4}
@@ -393,6 +410,8 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
         >
           <InputGroup size="lg">
             <Input
+              value={newMessage}
+              onChange={handleTyping}
               placeholder="Type your message..."
               pr="4.5rem"
               bg="gray.50"
@@ -400,6 +419,11 @@ const ChatArea = ({ selectedGroup, socket }: any) => {
               _focus={{
                 boxShadow: 'none',
                 bg: 'gray.100',
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  sendMessage();
+                }
               }}
             />
             <InputRightElement width="4.5rem">
